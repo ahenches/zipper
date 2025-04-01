@@ -1,5 +1,3 @@
-#include "./linked_list.h"
-
 typedef struct hash_map {
   int *value;
 } HashMap;
@@ -17,4 +15,10 @@ typedef struct huffman_tree {
     HuffmanNode *root;
 } HuffmanTree;
 
-HuffmanTree *create_huffman_tree(SortedNode *sorted_node);
+
+void print_huffman_tree(HuffmanTree *tree);
+void print_huffman_tree_rec(HuffmanNode *node, int depth);
+void free_huffman_tree(HuffmanTree *tree);
+void free_huffman_tree_rec(HuffmanNode *node);
+
+

@@ -2,14 +2,12 @@
 #include <stdlib.h>
 
 #include "./huffman_code.h"
+#include "./safe_alloc.h"
 
 HashMap *fill_map(FILE *file) {
-    HashMap *map = (HashMap *) malloc(sizeof(HashMap));
-    if (map == NULL) {
-        perror("Error allocating memory for map");
-        return NULL;
-    }
-    map->value = (int *) malloc(sizeof(int) * 256);
+    HashMap *map = (HashMap *) safe_alloc(sizeof(HashMap));
+
+    map->value = (int *) safe_alloc(sizeof(int) * 256);
 
     int char_read;
     while ((char_read = fgetc(file)) != EOF) {
@@ -20,78 +18,50 @@ HashMap *fill_map(FILE *file) {
     return map;
 }
 
-// SortedNode *create_sorted_list(HashMap *map) {
-//     SortedNode *sorted_list = (SortedNode *) malloc(sizeof(SortedNode));
-//     if (sorted_list == NULL) {
-//         perror("Error allocating memory for sorted list");
-//         return NULL;
-//     }
-//
-//     sorted_list->size = 0;
-//     for (int i = 0; i < 256; i++) {
-//         if (map->value[i] > 0) {
-//             sorted_list->size++;
-//         }
-//     }
-//
-//     sorted_list->tuples = (CharFrequencyTuple *) malloc(sizeof(CharFrequencyTuple) * sorted_list->size);
-//     if (sorted_list->tuples == NULL) {
-//         perror("Error allocating memory for tuples");
-//         free(sorted_list);
-//         return NULL;
-//     }
-//
-//
-//   int index = 0;
-//     for (int i = 0; i < 256; i++) {
-//         if (map->value[i] > 0) {
-//             sorted_list->tuples[index].character = i;
-//             sorted_list->tuples[index].frequency = map->value[i];
-//             index++;
-//         }
-//     }
-//
-//     return sorted_list;
-// }
-//
 
+HuffmanNode *create_huffman_node(char character, int frequency) {
+    HuffmanNode *node = (HuffmanNode *) safe_alloc(sizeof(HuffmanNode));
 
+    node->character = character;
+    node->frequency = frequency;
+    node->left = NULL;
+    node->right = NULL;
 
-/* SortedNode *create_sorted_list(HashMap *map) {
-    SortedNode *sorted_list = (SortedNode *) malloc(sizeof(SortedNode));
-    if (!sorted_list) {
-        perror("Error allocating memory for sorted list");
-        return NULL;
-    }
-
-    // Allocate the maximum possible size (worst case)
-    sorted_list->tuples = (CharFrequencyTuple *) malloc(256 * sizeof(CharFrequencyTuple));
-    if (!sorted_list->tuples) {
-        perror("Error allocating memory for tuples");
-        free(sorted_list);
-        return NULL;
-    }
-
-    // Single loop: Count valid entries & populate the array
-    int index = 0;
-    for (int i = 0; i < 256; i++) {
-        if (map->value[i] > 0) {
-            sorted_list->tuples[index].character = i;
-            sorted_list->tuples[index].frequency = map->value[i];
-            index++;
-        }
-    }
-
-    // Reduce the allocated memory to the actual size needed
-    sorted_list->size = index;
-    sorted_list->tuples = (CharFrequencyTuple *) realloc(sorted_list->tuples, sorted_list->size * sizeof(CharFrequencyTuple));
-
-    if (!sorted_list->tuples && sorted_list->size > 0) { // realloc failure (only if size > 0)
-        perror("Error resizing memory for tuples");
-        free(sorted_list);
-        return NULL;
-    }
-
-    return sorted_list;
+    return node;
 }
-*/
+
+void print_huffman_tree(HuffmanTree *tree) {
+    if (tree == NULL) {
+        return;
+    }
+    print_huffman_tree_rec(tree->root, 0);
+}
+
+void print_huffman_tree_rec(HuffmanNode *node, int depth) {
+    if (node == NULL) {
+        return;
+    }
+    for (int i = 0; i < depth; i++) {
+        printf("  ");
+    }
+    printf("Node: %c (%d)\n", node->character, node->frequency);
+    print_huffman_tree_rec(node->left, depth + 1);
+    print_huffman_tree_rec(node->right, depth + 1);
+}
+
+void free_huffman_tree(HuffmanTree *tree) {
+    if (tree == NULL) {
+        return;
+    }
+    free_huffman_tree_rec(tree->root);
+    free(tree);
+}
+
+void free_huffman_tree_rec(HuffmanNode *node) {
+    if (node == NULL) {
+        return;
+    }
+    free_huffman_tree_rec(node->left);
+    free_huffman_tree_rec(node->right);
+    free(node);
+}
