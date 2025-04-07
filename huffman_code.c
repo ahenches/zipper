@@ -4,15 +4,14 @@
 #include "./huffman_code.h"
 #include "./safe_alloc.h"
 
-HashMap *fill_map(FILE *file) {
+HashMap *fill_map(char *file_content) {
     HashMap *map = (HashMap *) safe_alloc(sizeof(HashMap));
 
-    map->value = (int *) safe_alloc(sizeof(int) * 256);
+    map->value = (int *) safe_calloc(256, sizeof(int));
 
-    int char_read;
-    while ((char_read = fgetc(file)) != EOF) {
-        printf("char: (%c)", char_read);
-        map->value[char_read]++;
+    while (*file_content != '\0') {
+        map->value[*file_content]++;
+        file_content++;
     }
 
     return map;
@@ -44,7 +43,12 @@ void print_huffman_tree_rec(HuffmanNode *node, int depth) {
     for (int i = 0; i < depth; i++) {
         printf("  ");
     }
-    printf("Node: %c (%d)\n", node->character, node->frequency);
+    if (node->left == NULL && node->right == NULL) {
+        printf("Leaf: %c (%d)\n", node->character, node->frequency);
+    } else {
+        printf("Internal: (%d)\n", node->frequency);
+    }
+
     print_huffman_tree_rec(node->left, depth + 1);
     print_huffman_tree_rec(node->right, depth + 1);
 }

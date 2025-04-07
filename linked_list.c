@@ -22,6 +22,8 @@ SortedNode *create_sorted_node(char character, int frequency) {
 
     node->value->character = character;
     node->value->frequency = frequency;
+    node->value->left = NULL;
+    node->value->right = NULL;
     node->next = NULL;
     return node;
 }
@@ -86,8 +88,9 @@ HuffmanNode *create_huffman_tree_rec(SortedNode *head) {
         return NULL;
     }
     if (head->next == NULL) {
-        printf("WEIRD SHIT\n");
-        return head->value;
+        HuffmanNode *leaf_node = head->value;
+        free(head);
+        return leaf_node;
     }
 
     int new_frequency = head->value->frequency + head->next->value->frequency;
@@ -98,8 +101,9 @@ HuffmanNode *create_huffman_tree_rec(SortedNode *head) {
     HuffmanNode *right_node = head->next->value;
     last_inserted->value->left = left_node;
     last_inserted->value->right = right_node;
+    free(head->next);
+    free(head);
 
-    printf("left: %c (%d) right: %c (%d) new: %d\n", left_node->character, left_node->frequency, right_node->character, right_node->frequency, new_frequency);
     return create_huffman_tree_rec(new_head);
 }
 

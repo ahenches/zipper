@@ -10,3 +10,12 @@ void *safe_alloc(size_t size) {
     }
     return ptr;
 }
+
+void *safe_calloc(size_t num, size_t size) {
+    void *ptr = calloc(num, size);
+    if (ptr == NULL) {
+        perror("Error allocating memory");
+        exit(EXIT_FAILURE);
+    }
+    return ptr;
+}

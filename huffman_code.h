@@ -2,7 +2,7 @@ typedef struct hash_map {
   int *value;
 } HashMap;
 
-HashMap *fill_map(FILE *file);
+HashMap *fill_map(char *file_content);
 
 typedef struct huffman_node {
     char character;
@@ -22,3 +22,4 @@ void free_huffman_tree(HuffmanTree *tree);
 void free_huffman_tree_rec(HuffmanNode *node);
 
 
+char **convert_symbols(HuffmanTree *tree);
