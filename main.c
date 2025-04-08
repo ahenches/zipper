@@ -13,9 +13,13 @@ int main(int argc, char *argv[]) {
 
     HashMap *m = fill_map(file_content);
     SortedNode *sorted_node = convert_to_linked_list(m);
+
     HuffmanTree *tree = create_huffman_tree(sorted_node);
 
+
     print_huffman_tree(tree);
+    convert_symbols(tree);
+
     free(m->value);
     free(m);
 

@@ -10,13 +10,39 @@ HashMap *fill_map(char *file_content) {
     map->value = (int *) safe_calloc(256, sizeof(int));
 
     while (*file_content != '\0') {
-        map->value[*file_content]++;
+        map->value[(unsigned char)*file_content]++;
         file_content++;
     }
 
     return map;
 }
 
+void convert_symbols(HuffmanTree *tree) {
+
+    if (tree == NULL) {
+        return;
+    }
+    char code[256];
+    code[0] = '\0'; // Initialize the code string
+
+    convert_symbols_rec(tree->root, code, 0);
+}
+
+void convert_symbols_rec(HuffmanNode *node, char *code, int depth) {
+    if (node == NULL) {
+        return;
+    }
+    if (node->left == NULL && node->right == NULL) {
+        printf("Symbol: %c, Code: %s\n", node->character, code);
+        return;
+    }
+    code[depth+1] = '\0';
+    code[depth] = '0';
+    convert_symbols_rec(node->left, code, depth + 1);
+    code[depth+1] = '\0';
+    code[depth] = '1';
+    convert_symbols_rec(node->right, code, depth + 1);
+}
 
 HuffmanNode *create_huffman_node(char character, int frequency) {
     HuffmanNode *node = (HuffmanNode *) safe_alloc(sizeof(HuffmanNode));

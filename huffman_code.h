@@ -15,6 +15,8 @@ typedef struct huffman_tree {
     HuffmanNode *root;
 } HuffmanTree;
 
+void convert_symbols(HuffmanTree *tree);
+void convert_symbols_rec(HuffmanNode *node, char *code, int depth);
 
 void print_huffman_tree(HuffmanTree *tree);
 void print_huffman_tree_rec(HuffmanNode *node, int depth);
@@ -22,4 +24,3 @@ void free_huffman_tree(HuffmanTree *tree);
 void free_huffman_tree_rec(HuffmanNode *node);
 
 
-char **convert_symbols(HuffmanTree *tree);
